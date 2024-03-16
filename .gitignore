@@ -1,0 +1,5 @@
+data_understanding/datasets/
+data_preparetion/dbt_packages/
+data_preparetion/target/
+data_preparetion/logs/
+venv/
