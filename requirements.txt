@@ -1,3 +1,12 @@
+numpy
+scipy
+pandas
+pyproj
 netCDF4
 rasterio
 openpyxl
+psycopg2
+geocoder
+sqlalchemy
+scikit-learn
+python-dotenv
