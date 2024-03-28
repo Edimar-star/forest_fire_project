@@ -1,8 +1,0 @@
-version: 2
-
-sources:
-  - name: dataset-name
-    database: project-id
-    tables:
-      - name: table-name
-        description: short-description
