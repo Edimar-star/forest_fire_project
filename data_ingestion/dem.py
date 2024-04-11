@@ -27,14 +27,6 @@ def read_hgt_file(file_name):
     os.remove(file_name)    
     return elevations
 
-def read_num_file(file_name):
-    with open(file_name, 'rb') as src:
-        contenido = src.read()
-        values = list(contenido)
-        
-    os.remove(file_name)
-    return values
-
 def get_lat_lon_bounds(latitudes, longitudes):
     lat_min, lon_min = latitudes.min(), longitudes.min()
     lat_max, lon_max = latitudes.max(), longitudes.max()
@@ -59,9 +51,7 @@ def get_changes(polygon, root_directory_path, lat_min, lon_min, latitudes, longi
         result_indexes = np.where(distances < min_distances)[0]
         values[result_indexes] = elevations[indexes][result_indexes]
         min_distances[result_indexes] = distances[result_indexes]
-
-        return min_distances, values
-    except:
+    finally:
         return min_distances, values
 
 def download_dem_data(root_directory_path, latitudes, longitudes, min_bounds, max_bounds):
@@ -91,7 +81,7 @@ def get_minimum_differences(root_directory_path, df_forest_fire):
     latitudes, longitudes = lat_lon_values[:, 0], lat_lon_values[:, 1]
 
     min_bounds, max_bounds = get_lat_lon_bounds(latitudes, longitudes)
-    values =  download_dem_data(root_directory_path, latitudes, longitudes, min_bounds, max_bounds)
+    values = download_dem_data(root_directory_path, latitudes, longitudes, min_bounds, max_bounds)
 
     return latitudes, longitudes, values
 
