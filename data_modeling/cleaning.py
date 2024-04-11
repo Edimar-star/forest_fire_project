@@ -1,4 +1,3 @@
-from pyhigh import get_elevation_batch, clear_cache
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
@@ -21,7 +20,7 @@ def create_connection():
 
     return engine, session
 
-def get_data():
+def get_data(session):
     sql_query = text("""
     WITH global_climate_and_forest_fire AS (
         SELECT * FROM global_climate 
@@ -39,12 +38,16 @@ def get_data():
     population_density_and_land_cover AS (
         SELECT * FROM population_density 
         JOIN land_cover_data USING(latitude, longitude, \"year\")
+    ),
+    population_density_and_land_cover_and_dem AS (
+        SELECT * FROM dem
+        JOIN population_density_and_land_cover USING(latitude, longitude)
     ), 
     all_data AS (
-        SELECT DISTINCT * FROM population_density_and_land_cover pd_lc
+        SELECT DISTINCT * FROM population_density_and_land_cover_and_dem pd_lc_dm
         JOIN global_climate_and_forest_fire_and_ndvi gc_ff_nd
         USING(latitude, longitude) 
-        WHERE pd_lc.\"year\" = EXTRACT(YEAR FROM gc_ff_nd.\"date\")
+        WHERE pd_lc_dm.\"year\" = EXTRACT(YEAR FROM gc_ff_nd.\"date\")
     )
 
     SELECT * FROM all_data;
@@ -71,26 +74,18 @@ def change_column_names(df):
 
     return df.rename(columns=columns)[columns.values()]
 
-def get_elevations(df):
-    lat_lon_values = df[['latitude', 'longitude']].values
-    data = get_elevation_batch(lat_lon_values)
-    clear_cache()
-
-    return data
-
 def close_connection(session, engine):
     session.close()
     engine.dispose()
 
 if __name__ == "__main__":
     load_dotenv()
-    create_connection()
+    session, engine = create_connection()
     file_path = "../datasets/final_dataset.pkl"
 
-    data = get_data()
+    data = get_data(session)
     df = query_to_dataframe(data)
     df = change_column_names(df)
-    df['elevation'] = get_elevations(df)
     df.to_pickle(file_path)
 
     close_connection(session, engine)
