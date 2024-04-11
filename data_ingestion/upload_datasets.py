@@ -47,5 +47,5 @@ def upload_datasets(root_directory_path, results):
 if __name__ == "__main__":
     load_dotenv()
     root_directory_path = get_root_directory()
-    results = ["forest_fire", "ndvi", "global_climate", "land_cover", "land_cover_legend", "population_density"]
+    results = ["forest_fire", "ndvi", "global_climate", "land_cover", "land_cover_legend", "population_density", "dem"]
     upload_datasets(root_directory_path, results)
