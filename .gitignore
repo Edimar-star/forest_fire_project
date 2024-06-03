@@ -1,4 +1,5 @@
 .ipynb_checkpoints/
 datasets/final_dataset.pkl
+datasets/final_dataset.csv
 venv/
 .env
